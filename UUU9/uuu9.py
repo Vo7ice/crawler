@@ -13,7 +13,6 @@ class Item:
         self.headers = {'User-Agent': self.user_agent}
         self.heroNames = []
 
-    def getHeroList(self, url):
         """
         <a href="/hero/show/Oracle">
             <img hid="134"
@@ -21,23 +20,67 @@ class Item:
             <span>神谕者</span>
         </a>
         """
-        # req = requests.get(url, headers=self.headers)
-        # print 'req status_code:%d' % req.status_code
-        # if req.status_code == 200:
-        soup = BeautifulSoup(open('index.html'), 'html.parser')
-        content = soup.find_all(id='herolist1')
-        pattern0 = re.compile('<span>.*?</span>')
-        # target = re.findall(pattern0, content)
-        # print 'target %s' % target
-        # 数据为乱码 需要encode
-        type = sys.getfilesystemencoding()
-        # else:
-        #    print 'network error!'
+
+    def getHeroList(self, url):
+        req = requests.get(url, headers=self.headers)
+        print 'req status_code:%d' % req.status_code
+        if req.status_code == 200:
+            soup = BeautifulSoup(req.content, 'html.parser')
+            i = 0
+            type = sys.getfilesystemencoding()
+            list = soup.find_all('div', 'picbox cl')
+            print 'size:%d' % len(list)
+            for link in soup.find_all('div', 'picbox cl'):
+                print i
+                hero = Hero()
+                herolist = link.find_all('a')
+                print 'list:%d' % len(herolist)
+                hero_url = link.a['href']
+                if link.a.contents[1].has_attr("hid"):
+                    hero_id = link.a.contents[1]['hid']
+                else:
+                    good_id = link.a.contents[1]['gid']
+                hero_img = link.a.contents[1]['src']
+                hero_name = link.find('span')
+                print 'url:%s, id:%s, img:%s, name:%s' % (hero_url, hero_id, hero_img, hero_name)
 
     def start(self):
         baseUrl = "http://db.dota2.uuu9.com/"
         self.getHeroList(baseUrl)
 
+
+class Hero(object):
+    @property
+    def hero_url(self):
+        return self.get('hero_url')
+
+    @hero_url.setter
+    def hero_url(self, value):
+        return self.set('hero_url', value)
+
+    @property
+    def hero_id(self):
+        return self.get('hero_id')
+
+    @hero_id.setter
+    def hero_id(self, value):
+        return self.set('hero_id', value)
+
+    @property
+    def img_url(self):
+        return self.get('img_url')
+
+    @img_url.setter
+    def img_url(self, value):
+        return self.set('img_url', value)
+
+    @property
+    def name(self):
+        return self.get('name')
+
+    @name.setter
+    def name(self, value):
+        return self.set('name', value)
 
 item = Item()
 item.start()
