@@ -1,5 +1,6 @@
 # coding=utf-8
 import leancloud
+from Model import HeroSave, GoodSave
 
 __author__ = 'Vo7ice'
 from bs4 import BeautifulSoup
@@ -40,14 +41,14 @@ class Item:
                     print i
                     heroInfo = HeroSave()
                     print 'href%s' % hero['href']
-                    heroInfo.set('hero_url', hero['href']).save()
+                    heroInfo.set('href', hero['href']).save()
                     print 'hero_id%s' % hero.img['hid']
-                    heroInfo.set('hero_id', hero.img['hid']).save()
+                    heroInfo.set('oid', hero.img['hid']).save()
                     print 'img_url%s' % hero.img['src']
-                    heroInfo.set('img_url', hero.img['src']).save()
+                    heroInfo.set('img_src', hero.img['src']).save()
                     print 'name%s' % hero.span.string
-                    heroInfo.set('name',hero.span.string).save()
-                    i = i + 1
+                    heroInfo.set('name', hero.span.string).save()
+                    i += 1
             except leancloud.LeanCloudError as e:
                 print e.message
         else:
@@ -66,15 +67,39 @@ class Item:
                     print i
                     goodInfo = GoodSave()
                     print 'href%s' % good['href']
-                    goodInfo.set('good_url', good['href']).save()
+                    goodInfo.set('href', good['href']).save()
                     print 'good_id%s' % good.img['gid']
-                    goodInfo.set('good_id', good.img['gid']).save()
+                    goodInfo.set('oid', good.img['gid']).save()
                     print 'img_url%s' % good.img['src']
-                    goodInfo.set('img_url', good.img['src']).save()
+                    goodInfo.set('img_src', good.img['src']).save()
                     print 'name%s' % good.span.string
-                    goodInfo.set('name',good.span.string).save()
+                    goodInfo.set('name', good.span.string).save()
+                    i += 1
             except leancloud.LeanCloudError as e:
                 print e.message
+        else:
+            print 'network error'
+
+    def getHeroSimpleList(self, url):
+        req = requests.get(url, headers=self.headers)
+        print 'req status_code:%d' % req.status_code
+        if req.status_code == 200:
+            soup = BeautifulSoup(req.content, 'html.parser')
+            tab = soup.find_all('tr', 'row row1')
+            print 'list size:%d' % len(tab)
+            # datas = datalist.find('tr')
+            # print 'list size:%d' % len(datas)
+            for tr in tab:
+                for index, td in enumerate(tr.findAll('td')):
+                    if index == 0:
+                        hid = td.span.a['hid']
+                    elif index == 1:
+                        print 'nickname:',td.findAll('a')[1].string
+                    elif index == 2:
+                        pass
+                        # HeroSave = leancloud.Object.extend('HeroSave')
+                        # query = HeroSave.query
+                        # query.equal_to('hero_id',)
         else:
             print 'network error'
 
@@ -82,75 +107,63 @@ class Item:
         baseUrl = "http://db.dota2.uuu9.com/"
         # self.getHeroList(baseUrl)
         self.getGoodList(baseUrl)
-
-
-class HeroSave(Object):
-    @property
-    def hero_url(self):
-        return self.get('hero_url')
-
-    @hero_url.setter
-    def hero_url(self, value):
-        return self.set('hero_url', value)
-
-    @property
-    def hero_id(self):
-        return self.get('hero_id')
-
-    @hero_id.setter
-    def hero_id(self, value):
-        return self.set('hero_id', value)
-
-    @property
-    def img_url(self):
-        return self.get('img_url')
-
-    @img_url.setter
-    def img_url(self, value):
-        return self.set('img_url', value)
-
-    @property
-    def hero_name(self):
-        return self.get('hero_name')
-
-    @hero_name.setter
-    def hero_name(self, value):
-        return self.set('hero_name', value)
-
-
-class GoodSave(Object):
-    @property
-    def good_url(self):
-        return self.get('good_url')
-
-    @good_url.setter
-    def good_url(self, value):
-        return self.set('good_url', value)
-
-    @property
-    def good_id(self):
-        return self.get('good_id')
-
-    @good_id.setter
-    def good_id(self, value):
-        return self.set('good_id', value)
-
-    @property
-    def img_url(self):
-        return self.get('img_url')
-
-    @good_url.setter
-    def img_url(self, value):
-        return self.set('img_url', value)
-
-    @property
-    def good_name(self):
-        return self.get('good_name')
-
-    @good_name.setter
-    def good_name(self, value):
-        return self.set('good_name', value)
+        # list = '/hero/list/'
+        # list_url = baseUrl + list
+        # self.getHeroSimpleList(list_url)
+        # for page in range(0, 10):
+        #     if page == 0:
+        #         self.getHeroSimpleList(list_url)
+        #     else:
+        #         list_url = list_url + '?p=' + str(page)
+        #         self.getHeroSimpleList(list_url)
 
 
 item = Item()
 item.start()
+
+"""
+<tr class="row row1">
+    <td width="100">
+        <span class="headpic"><a hid="134" href="/hero/show/Oracle">
+            <img src="http://dota2dbpic.uuu9.com/2b1dc7ac-2c86-43f2-b743-61f53421bef814111513531135518.jpg" /><b></b></a></span>
+    </td>
+    <td width="120" class="heroname">
+        <a href="/hero/show/Oracle"><b>神谕者</b></a><br />
+        <a href="/hero/show/Oracle">奈里夫</a>
+    </td>
+    <td width="200" class="skillpic">
+        <span class="picbox">
+            <a href="/skill/show/Oracleq">
+                <img sid="516" src="http://dota2dbpic.uuu9.com/bf61d5f4-5960-47e3-a028-05c3775c8b0a1.png" /><span class="key"></span></a>
+            <a href="/skill/show/Oraclew">
+                <img sid="517" src="http://dota2dbpic.uuu9.com/45b1d78f-a214-44a8-99b5-3b6fead389582.png" /><span class="key"></span></a>
+            <a href="/skill/show/Oraclee">
+                <img sid="518" src="http://dota2dbpic.uuu9.com/de3e0dcf-ca0a-4c36-b0fe-f67573cd3d4d3.png" /><span class="key"></span></a>
+            <a href="/skill/show/Oracler">
+                <img sid="519" src="http://dota2dbpic.uuu9.com/e90d9dd6-1adb-42fb-b397-f2957bf855ad4.png" /><span class="key"></span></a>
+        </span>
+    </td>
+    <td width="279" class="equipic">
+        <span class="picbox">
+            <a href="/goods/show/BootsofTravel"><b gid="112">
+                <img  src="http://dota2dbpic.uuu9.com/0091e871-edfd-4cfc-b261-ebc7ea9f7cfctravel_boots_lg.gif" /></b><span class="text">2450
+            </span></a>
+            <a href="/goods/show/Bloodstone"><b gid="144">
+                <img  src="http://dota2dbpic.uuu9.com/017112bc-654a-4d5e-98fa-8a0a3223f59cxjs.png" /></b><span class="text">4950
+            </span></a>
+            <a href="/goods/show/GuinsoosScytheofVyse"><b gid="37">
+                <img  src="http://dota2dbpic.uuu9.com/fdabc1a9-b8a5-486b-87c0-d1b82765bbaegs.jpg" /></b><span class="text">5675
+            </span></a>
+            <a href="/goods/show/RefresherOrb"><b gid="36">
+                <img  src="http://dota2dbpic.uuu9.com/7d17beec-b25a-47e0-9350-8f29f7185cearb.jpg" /></b><span class="text">5300
+            </span></a>
+            <a href="/goods/show/RodofAtos"><b gid="33">
+                <img  src="http://dota2dbpic.uuu9.com/b35d8b21-d19f-41fb-bf26-c7c70d22bf06ra.jpg" /></b><span class="text">3100
+            </span></a>
+            <a href="/goods/show/ShivasGuard"><b gid="130">
+                <img  src="http://dota2dbpic.uuu9.com/9b48b02b-b58c-4595-8a5f-b8a4d494d753swdsh.gif" /></b><span class="text">4700
+            </span></a>
+        </span>
+    </td>
+</tr>
+"""
