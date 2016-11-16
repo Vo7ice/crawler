@@ -1,6 +1,6 @@
 # coding=utf-8
 import leancloud
-from Model import HeroSave, GoodSave
+from Model import HeroSave, GoodSave, SkillSave
 
 __author__ = 'Vo7ice'
 from bs4 import BeautifulSoup
@@ -91,31 +91,64 @@ class Item:
             # print 'list size:%d' % len(datas)
             for tr in tab:
                 for index, td in enumerate(tr.findAll('td')):
-                    if index == 0:
+                    if index == 0:  # 查询对象
                         hid = td.span.a['hid']
-                    elif index == 1:
-                        print 'nickname:',td.findAll('a')[1].string
-                    elif index == 2:
-                        pass
-                        # HeroSave = leancloud.Object.extend('HeroSave')
-                        # query = HeroSave.query
-                        # query.equal_to('hero_id',)
+                        HeroSave = leancloud.Object.extend('HeroSave')
+                        query = HeroSave.query
+                        hero_info = query.equal_to('oid', hid).find()[0]
+                    elif index == 1:  # nickname
+                        # print 'nickname:', td.findAll('a')[1].string
+                        hero_info.set('nickname', td.findAll('a')[1].string).save()
+                    elif index == 2:  # 技能
+                        skills = td.findAll('a')
+                        skill_list = []
+                        for sk in skills:
+                            skillInfo = SkillSave()
+                            print 'href%s' % sk['href']
+                            skillInfo.set('skill_url', sk['href']).save()
+                            print 'skill_id%s' % sk.img['sid']
+                            skillInfo.set('skill_id', sk.img['sid']).save()
+                            print 'img_url%s' % sk.img['src']
+                            skillInfo.set('img_url', sk.img['src']).save()
+                            skill_list.append(skillInfo)
+                        hero_info.set('skill', skill_list).save()
+                    elif index == 3:  # 推荐装备
+                        goods = td.findAll('a')
+                        good_list = []
+                        for good in goods:
+                            query = GoodSave.query
+                            gid = good.b['gid']
+                            print 'gid:', gid
+                            try:
+                                good_info = query.equal_to('oid', gid).find()[0]
+                            except IndexError as e:
+                                good_info = None
+                            good_list.append(good_info)
+                        hero_info.set('recommend', good_list).save()
         else:
             print 'network error'
 
     def start(self):
         baseUrl = "http://db.dota2.uuu9.com/"
         # self.getHeroList(baseUrl)
-        self.getGoodList(baseUrl)
-        # list = '/hero/list/'
-        # list_url = baseUrl + list
+        # self.getGoodList(baseUrl)
+        list = '/hero/list/'
+        list_url = baseUrl + list
         # self.getHeroSimpleList(list_url)
-        # for page in range(0, 10):
+        self.getHeroSimpleList('http://db.dota2.uuu9.com/hero/list/?p=4')
+        self.getHeroSimpleList('http://db.dota2.uuu9.com/hero/list/?p=12')
+
+        # for page in range(10, 12):
         #     if page == 0:
+        #         list_url = 'http://db.dota2.uuu9.com/hero/list/'
         #         self.getHeroSimpleList(list_url)
+        #         print 'page 1 ok'
         #     else:
-        #         list_url = list_url + '?p=' + str(page)
+        #         list_url = 'http://db.dota2.uuu9.com/hero/list/?p='
+        #         list_url += str(page)
         #         self.getHeroSimpleList(list_url)
+        #         time.sleep(5)
+        #         print 'page', page, ' ok'
 
 
 item = Item()

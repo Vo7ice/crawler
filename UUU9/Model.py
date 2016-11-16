@@ -35,7 +35,6 @@ class BaseSave(Object):
 
 
 class HeroSave(BaseSave):
-
     @property
     def name(self):
         return self.get('name')
@@ -45,6 +44,14 @@ class HeroSave(BaseSave):
         return self.set('name', value)
 
     @property
+    def nickname(self):
+        return self.get('nickname')
+
+    @nickname.setter
+    def nickname(self, value):
+        return self.set('nickname', value)
+
+    @property
     def skill(self):
         return self.get('skill')
 
@@ -52,9 +59,16 @@ class HeroSave(BaseSave):
     def skill(self, value):
         return self.set('skill', value)
 
+    @property
+    def recommend(self):
+        return self.get('recommend')
+
+    @recommend.setter
+    def recommend(self, value):
+        return self.set('recommend', value)
+
 
 class GoodSave(BaseSave):
-
     @property
     def name(self):
         return self.get('name')
@@ -80,3 +94,11 @@ class SkillSave(Object):
     @img_url.setter
     def img_url(self, value):
         return self.set('img_url', value)
+
+    @property
+    def skill_url(self):
+        return self.get('skill_url')
+
+    @skill_url.setter
+    def skill_url(self, value):
+        return self.set('skill_url', value)
