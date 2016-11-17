@@ -1,13 +1,17 @@
 # coding=utf-8
+import logging
 import leancloud
 from Model import HeroSave, GoodSave, SkillSave
 
-__author__ = 'Vo7ice'
 from bs4 import BeautifulSoup
 import requests, re
 import time
 import sys
 from leancloud import Object
+
+logging.basicConfig(level=logging.INFO)
+
+__author__ = 'Vo7ice'
 
 
 class Item:
@@ -80,6 +84,7 @@ class Item:
         else:
             print 'network error'
 
+    # 英雄列表
     def getHeroSimpleList(self, url):
         req = requests.get(url, headers=self.headers)
         print 'req status_code:%d' % req.status_code
@@ -91,6 +96,7 @@ class Item:
             # print 'list size:%d' % len(datas)
             for tr in tab:
                 for index, td in enumerate(tr.findAll('td')):
+                    print 'data:',td
                     if index == 0:  # 查询对象
                         hid = td.span.a['hid']
                         HeroSave = leancloud.Object.extend('HeroSave')
@@ -128,6 +134,42 @@ class Item:
         else:
             print 'network error'
 
+    # 物品列表
+    def getGoodSimpleList(self, good_url):
+        req = requests.get(good_url, headers=self.headers)
+        logging.info('req status_code:%d' % req.status_code)
+        if req.status_code == 200:
+            soup = BeautifulSoup(req.content, 'html.parser')
+            tab = soup.find_all(name='tr', attrs={"class": re.compile("row row")})
+            print 'tab size:%d' % len(tab)
+            for tr in tab:
+                for index, td in enumerate(tr):
+                    GoodSave = leancloud.Object.extend('GoodSave')
+                    query = GoodSave.query
+                    if index == 0:  # 查询对象
+                        gid = td.span.a.img['gid']  # 获得gid
+                        print 'gid%s' % gid
+                        good_info = query.equal_to('oid', gid).find()[0]
+                    elif index == 2:  # 合成公式
+                        goods = td.findAll('a')
+                        composite_list = []
+                        if goods is not None:
+                            for good in goods:
+                                try:
+                                    print 'composite%s' % good.img['gid']
+                                    composite = query.equal_to('oid', good.img['gid']).find()[0]
+                                    print 'gold%s' % good.span.string
+                                    # composite.set('gold', good.span.string).save()
+                                except IndexError as e:
+                                    print 'error:', e.message
+                                    composite = None
+                                composite_list.append(composite)
+                        # good_info.set('composite',composite_list).save()
+                    elif index ==3: # 可合成物品
+                        pass
+        else:
+            logging.error('network error')
+
     def start(self):
         baseUrl = "http://db.dota2.uuu9.com/"
         # self.getHeroList(baseUrl)
@@ -135,9 +177,10 @@ class Item:
         list = '/hero/list/'
         list_url = baseUrl + list
         # self.getHeroSimpleList(list_url)
-        self.getHeroSimpleList('http://db.dota2.uuu9.com/hero/list/?p=4')
-        self.getHeroSimpleList('http://db.dota2.uuu9.com/hero/list/?p=12')
+        # self.getHeroSimpleList('http://db.dota2.uuu9.com/hero/list/?p=4')
+        # self.getHeroSimpleList('http://db.dota2.uuu9.com/hero/list/?p=12')
 
+        # 英雄列表
         # for page in range(10, 12):
         #     if page == 0:
         #         list_url = 'http://db.dota2.uuu9.com/hero/list/'
@@ -149,6 +192,20 @@ class Item:
         #         self.getHeroSimpleList(list_url)
         #         time.sleep(5)
         #         print 'page', page, ' ok'
+
+        self.getGoodSimpleList('http://db.dota2.uuu9.com/goods/list/')
+        # 物品列表
+        # for page in range(1, 16):
+        #     if page == 1:
+        #         good_url = 'http://db.dota2.uuu9.com/goods/list/'
+        #         self.getGoodSimpleList(good_url)
+        #         logging.info('page 1 okay!')
+        #     else:
+        #         good_url = 'http://db.dota2.uuu9.com/goods/list/'
+        #         good_url += str(page)
+        #         good_url += '&'
+        #         self.getGoodSimpleList(good_url)
+        #         logging.info('page ', page, ' okay!')
 
 
 item = Item()
@@ -197,6 +254,28 @@ item.start()
                 <img  src="http://dota2dbpic.uuu9.com/9b48b02b-b58c-4595-8a5f-b8a4d494d753swdsh.gif" /></b><span class="text">4700
             </span></a>
         </span>
+    </td>
+</tr>
+"""
+"""
+<tr class="row row2">
+    <td width="80" class="equipic">
+        <span class="picbox"><a href="/goods/show/ mango">
+            <img gid="201" src="http://dota2dbpic.uuu9.com/56acc93c-c871-428c-af78-527b2c910d071.png" /></a> </span>
+    </td>
+    <td width="120" class="heroname">
+        <a href="/goods/show/ mango">魔法芒果</a>
+    </td>
+    <td width="195" class="equipic">
+        <span class="picbox">
+        </span>
+    </td>
+    <td width="195" class="equipic">
+        <span class="picbox">
+        </span>
+    </td>
+    <td width="109">
+        <span class="gold">150</span>
     </td>
 </tr>
 """

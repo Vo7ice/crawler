@@ -77,6 +77,22 @@ class GoodSave(BaseSave):
     def name(self, value):
         return self.set('name', value)
 
+    @property
+    def gold(self):
+        return self.get('gold')
+
+    @gold.setter
+    def gold(self, value):
+        return self.set('gold', value)
+
+    @property
+    def composite(self):
+        return self.get('composite')
+
+    @composite.setter
+    def composite(self, value):
+        return self.set('composite', value)
+
 
 class SkillSave(Object):
     @property
