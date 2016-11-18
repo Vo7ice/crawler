@@ -2,16 +2,38 @@
 import logging
 import leancloud
 from Model import HeroSave, GoodSave, SkillSave
+from leancloud import LeanCloudError
 
 from bs4 import BeautifulSoup
 import requests, re
 import time
 import sys
-from leancloud import Object
 
 logging.basicConfig(level=logging.INFO)
 
 __author__ = 'Vo7ice'
+
+
+def checkHeroExsit(oid):
+    HeroSave = leancloud.Object.extend('HeroSave')
+    query = HeroSave.query
+    try:
+        hero_info = query.equal_to('oid', oid).find()[0]
+    except LeanCloudError | IndexError as e:
+        print 'error:', e.message
+        hero_info = None
+    return hero_info
+
+
+def checkGoodExsit(oid):
+    GoodSave = leancloud.Object.extend('GoodSave')
+    query = GoodSave.query
+    try:
+        good_info = query.equal_to('oid', oid).find()[0]
+    except IndexError as e:
+        print 'error:', e.message
+        good_info = None
+    return good_info
 
 
 class Item:
@@ -96,7 +118,7 @@ class Item:
             # print 'list size:%d' % len(datas)
             for tr in tab:
                 for index, td in enumerate(tr.findAll('td')):
-                    print 'data:',td
+                    print 'data:', td
                     if index == 0:  # 查询对象
                         hid = td.span.a['hid']
                         HeroSave = leancloud.Object.extend('HeroSave')
@@ -111,11 +133,11 @@ class Item:
                         for sk in skills:
                             skillInfo = SkillSave()
                             print 'href%s' % sk['href']
-                            skillInfo.set('skill_url', sk['href']).save()
+                            skillInfo.set('href', sk['href']).save()
                             print 'skill_id%s' % sk.img['sid']
-                            skillInfo.set('skill_id', sk.img['sid']).save()
+                            skillInfo.set('oid', sk.img['sid']).save()
                             print 'img_url%s' % sk.img['src']
-                            skillInfo.set('img_url', sk.img['src']).save()
+                            skillInfo.set('img_src', sk.img['src']).save()
                             skill_list.append(skillInfo)
                         hero_info.set('skill', skill_list).save()
                     elif index == 3:  # 推荐装备
@@ -143,30 +165,62 @@ class Item:
             tab = soup.find_all(name='tr', attrs={"class": re.compile("row row")})
             print 'tab size:%d' % len(tab)
             for tr in tab:
-                for index, td in enumerate(tr):
-                    GoodSave = leancloud.Object.extend('GoodSave')
-                    query = GoodSave.query
+                for index, td in enumerate(tr.findAll('td')):
                     if index == 0:  # 查询对象
                         gid = td.span.a.img['gid']  # 获得gid
-                        print 'gid%s' % gid
-                        good_info = query.equal_to('oid', gid).find()[0]
+                        src = td.span.a.img['src']  # 获得src
+                        href = td.span.a['href']  # 获得href
+                        print 'gid:%s,src:%s' % (gid, src)
+                        good_check = checkGoodExsit(gid)
+                        if good_check is None:
+                            good_info = GoodSave()
+                            good_info.set('oid', gid).save()
+                            good_info.set('img_src', src).save()
+                            good_info.set('href', href).save()
+                        else:
+                            good_info = good_check
+                    elif index == 1:
+                        name = td.a.string  # name
+                        print 'name%s' % name
+                        good_info.set('name', name).save()
                     elif index == 2:  # 合成公式
                         goods = td.findAll('a')
                         composite_list = []
-                        if goods is not None:
-                            for good in goods:
-                                try:
-                                    print 'composite%s' % good.img['gid']
-                                    composite = query.equal_to('oid', good.img['gid']).find()[0]
-                                    print 'gold%s' % good.span.string
-                                    # composite.set('gold', good.span.string).save()
-                                except IndexError as e:
-                                    print 'error:', e.message
-                                    composite = None
-                                composite_list.append(composite)
-                        # good_info.set('composite',composite_list).save()
-                    elif index ==3: # 可合成物品
-                        pass
+                        for good in goods:
+                            print 'composite  id:%s,src:%s,href:%s' % (
+                                good.img['gid'], good.img['src'], good['href'])
+                            print 'gold:%s' % good.span.string
+                            good_check = checkGoodExsit(good.img['gid'])
+                            if good_check is None:
+                                composite = GoodSave()
+                                composite.set('oid', good.img['gid']).save()
+                                composite.set('img_src', good.img['src']).save()
+                                composite.set('href', good['href']).save()
+                            else:
+                                composite = good_check
+                                composite.set('gold', good.span.string).save()
+                            composite_list.append(composite)
+                        good_info.set('composite', composite_list).save()
+                    elif index == 3:  # 可合成物品
+                        goods = td.findAll('a')
+                        advanced_list = []
+                        for good in goods:
+                            print 'advanced id:%s,src:%s,href:%s' % (
+                                good.img['gid'], good.img['src'], good['href'])
+                            print 'gold%s' % good.span.string
+                            good_check = checkGoodExsit(good.img['gid'])
+                            if good_check is None:
+                                advanced = GoodSave()
+                                advanced.set('oid', good.img['gid']).save()
+                                advanced.set('img_src', good.img['src']).save()
+                                advanced.set('href', good['href']).save()
+                            else:
+                                advanced = good_check
+                            advanced.set('gold', good.span.string).save()
+                            advanced_list.append(advanced)
+                        good_info.set('advanced', advanced_list).save()
+                    elif index == 4:  # 价格
+                        good_info.set('gold', td.span.string).save()
         else:
             logging.error('network error')
 
@@ -193,19 +247,20 @@ class Item:
         #         time.sleep(5)
         #         print 'page', page, ' ok'
 
-        self.getGoodSimpleList('http://db.dota2.uuu9.com/goods/list/')
+        # self.getGoodSimpleList('http://db.dota2.uuu9.com/goods/list/?p=3&')
         # 物品列表
-        # for page in range(1, 16):
-        #     if page == 1:
-        #         good_url = 'http://db.dota2.uuu9.com/goods/list/'
-        #         self.getGoodSimpleList(good_url)
-        #         logging.info('page 1 okay!')
-        #     else:
-        #         good_url = 'http://db.dota2.uuu9.com/goods/list/'
-        #         good_url += str(page)
-        #         good_url += '&'
-        #         self.getGoodSimpleList(good_url)
-        #         logging.info('page ', page, ' okay!')
+        for page in range(1, 16):
+            if page == 1:
+                good_url = 'http://db.dota2.uuu9.com/goods/list/'
+                self.getGoodSimpleList(good_url)
+                print 'page 1 okay!'
+            else:
+                good_url = 'http://db.dota2.uuu9.com/goods/list/?p='
+                good_url += str(page)
+                good_url += '&'
+                print('good_url:%s' % good_url)
+                self.getGoodSimpleList(good_url)
+                print 'page ', page, ' okay!'
 
 
 item = Item()

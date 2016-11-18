@@ -33,8 +33,6 @@ class BaseSave(Object):
     def img_src(self, value):
         return self.set('img_src', value)
 
-
-class HeroSave(BaseSave):
     @property
     def name(self):
         return self.get('name')
@@ -43,6 +41,8 @@ class HeroSave(BaseSave):
     def name(self, value):
         return self.set('name', value)
 
+
+class HeroSave(BaseSave):
     @property
     def nickname(self):
         return self.get('nickname')
@@ -70,14 +70,6 @@ class HeroSave(BaseSave):
 
 class GoodSave(BaseSave):
     @property
-    def name(self):
-        return self.get('name')
-
-    @name.setter
-    def name(self, value):
-        return self.set('name', value)
-
-    @property
     def gold(self):
         return self.get('gold')
 
@@ -93,28 +85,14 @@ class GoodSave(BaseSave):
     def composite(self, value):
         return self.set('composite', value)
 
-
-class SkillSave(Object):
     @property
-    def skill_id(self):
-        return self.get('skill_id')
+    def advanced(self):
+        return self.get('advanced')
 
-    @skill_id.setter
-    def skill_id(self, value):
-        return self.set('skill_id', value)
+    @advanced.setter
+    def advanced(self, value):
+        return self.set('advanced', value)
 
-    @property
-    def img_url(self):
-        return self.get('img_url')
 
-    @img_url.setter
-    def img_url(self, value):
-        return self.set('img_url', value)
-
-    @property
-    def skill_url(self):
-        return self.get('skill_url')
-
-    @skill_url.setter
-    def skill_url(self, value):
-        return self.set('skill_url', value)
+class SkillSave(BaseSave):
+    pass
