@@ -7,7 +7,7 @@ from leancloud import Object
 logging.basicConfig(level=logging.INFO)
 __author__ = 'Vo7ice'
 
-
+# 基础类 包含href(url) oid(id) img_src(图片) name(名字)
 class BaseSave(Object):
     @property
     def href(self):
@@ -42,6 +42,7 @@ class BaseSave(Object):
         return self.set('name', value)
 
 
+# 英雄存储类 包含nickname(别称) skill(技能) recommend(推荐装备)
 class HeroSave(BaseSave):
     @property
     def nickname(self):
@@ -68,6 +69,7 @@ class HeroSave(BaseSave):
         return self.set('recommend', value)
 
 
+# 物品存储类 包含gold(金钱) composite(合成公式) advanced(可合成装备)
 class GoodSave(BaseSave):
     @property
     def gold(self):
@@ -93,6 +95,6 @@ class GoodSave(BaseSave):
     def advanced(self, value):
         return self.set('advanced', value)
 
-
+# 物品存储类 
 class SkillSave(BaseSave):
     pass

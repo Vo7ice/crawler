@@ -34,7 +34,16 @@ def checkGoodExsit(oid):
         print 'error:', e.message
         good_info = None
     return good_info
-
+	
+def checkSkillExsit(oid):
+	SkillSave = leancloud.Object.extend('SkillSave')
+	query = SkillSave.query
+	try:
+		skill_info = query.equal_to('oid', oid).find()[0]
+	except IndexError as e:
+		print 'error:', e.message
+		skill_info = None
+	return skill_info
 
 class Item:
     def __init__(self):
@@ -191,14 +200,14 @@ class Item:
                                 good.img['gid'], good.img['src'], good['href'])
                             print 'gold:%s' % good.span.string
                             good_check = checkGoodExsit(good.img['gid'])
-                            if good_check is None:
+                            if good_check is None: # 如果没有这个对象
                                 composite = GoodSave()
                                 composite.set('oid', good.img['gid']).save()
                                 composite.set('img_src', good.img['src']).save()
                                 composite.set('href', good['href']).save()
                             else:
                                 composite = good_check
-                                composite.set('gold', good.span.string).save()
+                            composite.set('gold', good.span.string).save() # 设置金额
                             composite_list.append(composite)
                         good_info.set('composite', composite_list).save()
                     elif index == 3:  # 可合成物品
@@ -209,7 +218,7 @@ class Item:
                                 good.img['gid'], good.img['src'], good['href'])
                             print 'gold%s' % good.span.string
                             good_check = checkGoodExsit(good.img['gid'])
-                            if good_check is None:
+                            if good_check is None: # 如果没有这个对象
                                 advanced = GoodSave()
                                 advanced.set('oid', good.img['gid']).save()
                                 advanced.set('img_src', good.img['src']).save()
@@ -228,8 +237,8 @@ class Item:
         baseUrl = "http://db.dota2.uuu9.com/"
         # self.getHeroList(baseUrl)
         # self.getGoodList(baseUrl)
-        list = '/hero/list/'
-        list_url = baseUrl + list
+        # list = '/hero/list/'
+        # list_url = baseUrl + list
         # self.getHeroSimpleList(list_url)
         # self.getHeroSimpleList('http://db.dota2.uuu9.com/hero/list/?p=4')
         # self.getHeroSimpleList('http://db.dota2.uuu9.com/hero/list/?p=12')
@@ -248,6 +257,7 @@ class Item:
         #         print 'page', page, ' ok'
 
         # self.getGoodSimpleList('http://db.dota2.uuu9.com/goods/list/?p=3&')
+		
         # 物品列表
         for page in range(1, 16):
             if page == 1:
@@ -258,11 +268,10 @@ class Item:
                 good_url = 'http://db.dota2.uuu9.com/goods/list/?p='
                 good_url += str(page)
                 good_url += '&'
-                print('good_url:%s' % good_url)
                 self.getGoodSimpleList(good_url)
+				time.sleep(5)
                 print 'page ', page, ' okay!'
-
-
+				
 item = Item()
 item.start()
 
