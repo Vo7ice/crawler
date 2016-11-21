@@ -7,6 +7,7 @@ from leancloud import Object
 logging.basicConfig(level=logging.INFO)
 __author__ = 'Vo7ice'
 
+
 # 基础类 包含href(url) oid(id) img_src(图片) name(名字)
 class BaseSave(Object):
     @property
@@ -95,6 +96,13 @@ class GoodSave(BaseSave):
     def advanced(self, value):
         return self.set('advanced', value)
 
-# 物品存储类 
+
+# 物品存储类
 class SkillSave(BaseSave):
-    pass
+    @property
+    def hero_id(self):
+        return self.get('hero_id')
+
+    @hero_id.setter
+    def hero_id(self, value):
+        return self.set('hero_id', value)
