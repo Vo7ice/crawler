@@ -1,7 +1,7 @@
 # coding=utf-8
 import logging
 import leancloud
-from requests.packages.urllib3.exceptions import ConnectionError
+
 from Model import HeroSave, GoodSave, SkillSave
 from leancloud import LeanCloudError
 
@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup
 import requests, re
 import time
 import sys
+from requests.adapters import HTTPAdapter
 
 logging.basicConfig(level=logging.INFO)
 
@@ -115,6 +116,8 @@ class Item:
 
     # 英雄列表
     def getHeroSimpleList(self, url):
+        s = requests.session()
+        s.keep_alive = False
         req = requests.get(url, headers=self.headers)
         print 'req status_code:%d' % req.status_code
         if req.status_code == 200:
@@ -284,6 +287,10 @@ class Item:
 
 
 item = Item()
+s = requests.Session()
+s.mount('http://db.dota2.uuu9.com/', HTTPAdapter(max_retries=5))
+s.mount('https://db.dota2.uuu9.com/', HTTPAdapter(max_retries=5))
+s.keep_alive = False
 item.start()
 
 """
