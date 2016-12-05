@@ -24,15 +24,14 @@ class GoodDetail:
         if req.status_code == 200:
             soup = BeautifulSoup(req.content, 'html.parser')
             span = soup.find_all('span', 'paddju')
-            print 'span:%s' % span
-            for index, p in enumerate(span):
-                print 'index:%d,p:%s' % (index, p)
-                if index == 0:
-                    if p.string is None:
-                        pass
-                    else:
-                        for a in p.findAll('a'):
-                            pass
+            print 'span:%d' % len(span)
+            if span is not None:
+                content = span[0]
+                tag = content.findAll('a')
+                print 'tag:%d' %len(tag)
+
+            else:
+                print 'no content exsit'
         else:
             print 'network error'
 
