@@ -132,6 +132,15 @@ class GoodSave(BaseSave):
     def consume(self, value):
         return self.set('consume', value)
 
+    # 属性
+    @property
+    def attri(self):
+        return self.get('attri')
+
+    @attri.setter
+    def attri(self, value):
+        return self.set('attri', value)
+
     # 军备
     @property
     def arms(self):
@@ -312,7 +321,122 @@ class GoodSave(BaseSave):
     def roshan(self, value):
         return self.set('roshan', value)
 
+    # 圣物关口
+    @property
+    def sacred_mark(self):
+        return self.get('sacred_mark')
 
+    @sacred_mark.setter
+    def sacred_mark(self, value):
+        return self.set('sacred_mark', value)
+
+    # 支援法衣
+    @property
+    def supportive_vestments(self):
+        return self.get('supportive_vestments')
+
+    @supportive_vestments.setter
+    def supportive_vestments(self, value):
+        return self.set('supportive_vestments', value)
+
+    # 秘法圣所
+    @property
+    def arcane_sanctum(self):
+        return self.get('arcane_sanctum')
+
+    @arcane_sanctum.setter
+    def arcane_sanctum(self, value):
+        return self.set('arcane_sanctum', value)
+
+    # 保护领地
+    @property
+    def protectorate(self):
+        return self.get('protectorate')
+
+    @protectorate.setter
+    def protectorate(self, value):
+        return self.set('protectorate', value)
+
+    # 魅惑遗物
+    @property
+    def enchanted_artifacts(self):
+        return self.get('enchanted_artifacts')
+
+    @enchanted_artifacts.setter
+    def enchanted_artifacts(self, value):
+        return self.set('enchanted_artifacts', value)
+
+    # 远古兵器
+    @property
+    def ancient_weapon(self):
+        return self.get('ancient_weapon')
+
+    @ancient_weapon.setter
+    def ancient_weapon(self, value):
+        return self.set('ancient_weapon', value)
+
+    # 武器商人比泽
+    @property
+    def bezer(self):
+        return self.get('bezer')
+
+    @bezer.setter
+    def bezer(self, value):
+        return self.set('bezer', value)
+
+    # 饰品商人希娜
+    @property
+    def sheena(self):
+        return self.get('sheena')
+
+    @sheena.setter
+    def sheena(self, value):
+        return self.set('sheena', value)
+
+    # 奎尔瑟兰的密室
+    @property
+    def quelsey(self):
+        return self.get('quelsey')
+
+    @quelsey.setter
+    def quelsey(self, value):
+        return self.set('quelsey', value)
+
+    # 奇迹古树
+    @property
+    def miracle_tree(self):
+        return self.get('miracle_tree')
+
+    @miracle_tree.setter
+    def miracle_tree(self, value):
+        return self.set('miracle_tree', value)
+
+    # 黑市商人
+    @property
+    def black_marketeer(self):
+        return self.get('black_marketeer')
+
+    @black_marketeer.setter
+    def black_marketeer(self, value):
+        return self.set('black_marketeer', value)
+
+    # 地精实验室
+    @property
+    def goblin_lab(self):
+        return self.get('goblin_lab')
+
+    @goblin_lab.setter
+    def goblin_lab(self, value):
+        return self.set('goblin_lab')
+
+    # 地精商人
+    @property
+    def goblin_merchant(self):
+        return self.get('goblin_merchant')
+
+    @goblin_merchant.setter
+    def goblin_merchant(self, value):
+        return self.set('goblin_merchant', value)
 
 
 # 物品存储类

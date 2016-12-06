@@ -9,6 +9,18 @@ __author__ = 'Vo7ice'
 import leancloud
 from Model import GoodSave
 
+tags = ['hp', 'mp', 'life_regeneration', 'mana_regeneration', 'armor', 'magic_resist', 'vampire', 'damage',
+        'attack_speed', 'move_speed', 'ability', 'agility', 'intelligence', 'consume', 'attri', 'arms', 'arcane',
+        'normal', 'auxiliary', 'instrument', 'weapon', 'defense', 'holy', 'mystery', 'roshan', 'sacred_mark',
+        'supportive_vestments', 'arcane_sanctum', 'protectorate', 'enchanted_artifacts', 'ancient_weapon', 'bezer',
+        'sheena', 'miracle_tree', 'black_marketeer', 'goblin_lab', 'goblin_merchant'
+        ]
+
+
+def initial(good):
+    for tag in tags:
+        good.set(tag, False).save()
+
 
 class GoodDetail:
     global baseUrl
@@ -19,6 +31,7 @@ class GoodDetail:
         self.headers = {'User-Agent': self.user_agent}
 
     def getDetailInfo(self, url, good):
+        initial(good)
         req = requests.get(url, headers=self.headers)
         print 'req status_code:%d' % req.status_code
         if req.status_code == 200:
@@ -27,9 +40,13 @@ class GoodDetail:
             print 'span:%d' % len(span)
             if span is not None:
                 content = span[0]
+                print 'content:',content
                 tag = content.findAll('a')
-                print 'tag:%d' %len(tag)
-
+                print 'tag:%d' % len(tag)
+                for item in tag:
+                    print 'item:%s' % item
+                    if item in tags:
+                        good.set(item, True)
             else:
                 print 'no content exsit'
         else:
