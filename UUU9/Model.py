@@ -96,6 +96,14 @@ class GoodSave(BaseSave):
     def advanced(self, value):
         return self.set('advanced', value)
 
+    @property
+    def discription(self):
+        return self.get('discription')
+
+    @discription.setter
+    def discription(self, value):
+        return self.set('discription', value)
+
     # 力量
     @property
     def ability(self):

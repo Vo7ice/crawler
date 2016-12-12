@@ -1,4 +1,5 @@
 # coding=utf-8
+import re
 import time
 from bs4 import BeautifulSoup
 import requests
@@ -22,6 +23,11 @@ def initial(good):
         good.set(tag, False).save()
 
 
+def get_tag_order(href):
+    print 'href:', href[17:]
+    return int(href[17:]) + 1
+
+
 class GoodDetail:
     global baseUrl
 
@@ -31,7 +37,7 @@ class GoodDetail:
         self.headers = {'User-Agent': self.user_agent}
 
     def getDetailInfo(self, url, good):
-        initial(good)
+        initial(good=good)
         req = requests.get(url, headers=self.headers)
         print 'req status_code:%d' % req.status_code
         if req.status_code == 200:
@@ -40,24 +46,30 @@ class GoodDetail:
             print 'span:%d' % len(span)
             if span is not None:
                 content = span[0]
-                print 'content:',content
+                print 'content:', content
                 tag = content.findAll('a')
                 print 'tag:%d' % len(tag)
                 for item in tag:
                     print 'item:%s' % item
-                    if item in tags:
-                        good.set(item, True)
+                    order = get_tag_order(item['href'])
+                    good.set(tags[order], True).save()
+                    print 'value attribute:', good.get(tags[order])
+                discription = content.findAll('p')[1].string
+                print 'discription:', discription
+                good.set('discription',discription)
+                # discription = discription.replace('</br>', '\n')
             else:
                 print 'no content exsit'
         else:
             print 'network error'
 
     def start(self):
-        baseUrl = "http://db.dota2.uuu9.com/"
+        baseUrl = "http://db.dota2.uuu9.com"
         GoodSave = leancloud.Object.extend('GoodSave')
-        query = leancloud.Query(GoodSave)
-        query.limit(10)
-        good_info = query.find()[0]
+        # query = leancloud.Query(GoodSave)
+        query = GoodSave.query
+        good_info = query.equal_to('href', '/goods/show/LotharsEdge').find()[0]
+        # good_info = query.find()[0]
         url = baseUrl + good_info.get('href')
         print 'url:%s' % url
         self.getDetailInfo(url, good=good_info)
