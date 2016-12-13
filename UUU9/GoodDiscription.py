@@ -28,6 +28,33 @@ def get_tag_order(href):
     return int(href[17:]) + 1
 
 
+def set_red(good, reds):
+    count = len(reds)
+    red = ''
+    for i in range(0, count - 1):
+        red += reds[i].string
+        red += '\n'
+    good.set('red', red).save()
+
+
+def set_yellow(good, yellows):
+    count = len(yellows)
+    yellow = ''
+    for i in range(0, count - 1):
+        yellow += yellows[i].string
+        yellow += '\n'
+    good.set('yellow', yellow).save()
+
+
+def set_orange(good, oranges):
+    count = len(oranges)
+    orange = ''
+    for i in range(0, count - 3):
+        orange += oranges[i].string
+        orange += '\n'
+    good.set('orange', orange).save()
+
+
 class GoodDetail:
     global baseUrl
 
@@ -42,6 +69,19 @@ class GoodDetail:
         print 'req status_code:%d' % req.status_code
         if req.status_code == 200:
             soup = BeautifulSoup(req.content, 'html.parser')
+            reds = soup.find_all('span', 'red')
+            if len(reds) >= 2:
+                set_red(good=good, reds=reds)
+            yellows = soup.find_all('span', 'yellow')
+            if len(yellows) >= 2:
+                set_yellow(good=good, yellows=yellows)
+            oranges = soup.find_all('span', 'orange')
+            print 'oranges:', len(oranges)
+            if len(oranges) >= 4:
+                set_orange(good=good, oranges=oranges)
+            name = soup.find_all('a', 'name')
+            print 'name:', name.string
+            good.set('name', name.string)
             span = soup.find_all('span', 'paddju')
             print 'span:%d' % len(span)
             if span is not None:
@@ -54,9 +94,13 @@ class GoodDetail:
                     order = get_tag_order(item['href'])
                     good.set(tags[order], True).save()
                     print 'value attribute:', good.get(tags[order])
-                discription = content.findAll('p')[1].string
-                print 'discription:', discription
-                good.set('discription',discription)
+                discription = content.findAll('p')[1]
+                print 'discription:', discription.string
+                good.set('discription', discription.string.strip()).save()
+                # red = discription.find_all('span', 'red')
+                # print 'red:', len(red)
+                # yellow = discription.find_all('span', 'yellow')
+                # print 'yellow:', len(yellow)
                 # discription = discription.replace('</br>', '\n')
             else:
                 print 'no content exsit'

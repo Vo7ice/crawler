@@ -104,6 +104,30 @@ class GoodSave(BaseSave):
     def discription(self, value):
         return self.set('discription', value)
 
+    @property
+    def red(self):
+        return self.get('red')
+
+    @red.setter
+    def red(self, value):
+        return self.set('red', value)
+
+    @property
+    def yellow(self):
+        return self.get('yellow')
+
+    @yellow.setter
+    def yellow(self, value):
+        return self.set('yellow', value)
+
+    @property
+    def orange(self):
+        return self.get('orange')
+
+    @orange.setter
+    def orange(self, value):
+        return self.set('orange', value)
+
     # 力量
     @property
     def ability(self):
