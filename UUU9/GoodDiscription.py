@@ -55,6 +55,28 @@ def set_orange(good, oranges):
     good.set('orange', orange).save()
 
 
+def checkHeroExsit(oid):
+    HeroSave = leancloud.Object.extend('HeroSave')
+    query = HeroSave.query
+    try:
+        hero_info = query.equal_to('oid', oid).find()[0]
+    except IndexError as e:
+        print 'error:', e.message
+        hero_info = None
+    return hero_info
+
+
+def checkGoodExsit(oid):
+    GoodSave = leancloud.Object.extend('GoodSave')
+    query = GoodSave.query
+    try:
+        good_info = query.equal_to('oid', oid).find()[0]
+    except IndexError as e:
+        print 'error:', e.message
+        good_info = None
+    return good_info
+
+
 class GoodDetail:
     global baseUrl
 
@@ -79,9 +101,30 @@ class GoodDetail:
             print 'oranges:', len(oranges)
             if len(oranges) >= 4:
                 set_orange(good=good, oranges=oranges)
-            name = soup.find_all('a', 'name')
-            print 'name:', name.string
-            good.set('name', name.string)
+            goods = soup.find_all('div', 'picbox l')
+            print 'name:', goods[0].a.img['title']
+            good.set('name', goods[0].a.img['title']).save()
+            advanced = []
+            if good.get('advanced') is None and good.get('composite') is None:
+                print 'size:', len(goods)
+                advanced_content = goods[1:-2]
+                for x in advanced_content:
+                    goodInfo = checkGoodExsit(x.a.img['gid'])
+                    if goodInfo is not None:
+                        advanced.append(goodInfo)
+                good.set('advanced', advanced).save()  # 卷轴设置进阶合成物品
+            fits = soup.find_all('div', 'headpic l')
+            suit = []
+            if fits is not None:
+                print 'fits:', len(fits)
+                for fit in fits:
+                    heroInfo = checkHeroExsit(fit.a['hid'])
+                    if heroInfo is not None:
+                        suit.append(heroInfo)
+            else:
+                print 'no hero fit this item'
+            good.set('suit', suit).save()  # 设置适合出这件装备的英雄
+
             span = soup.find_all('span', 'paddju')
             print 'span:%d' % len(span)
             if span is not None:

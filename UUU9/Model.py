@@ -128,6 +128,14 @@ class GoodSave(BaseSave):
     def orange(self, value):
         return self.set('orange', value)
 
+    @property
+    def suit(self):
+        return self.get('suit')
+
+    @suit.setter
+    def suit(self, value):
+        return self.set('suit', value)
+
     # 力量
     @property
     def ability(self):

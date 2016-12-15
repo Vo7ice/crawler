@@ -257,33 +257,33 @@ class Item:
         # self.getHeroSimpleList('http://db.dota2.uuu9.com/hero/list/?p=11')
 
         # 英雄列表
-        for page in range(8, 12):
-            if page == 1:
-                hero_url = 'http://db.dota2.uuu9.com/hero/list/'
-                self.getHeroSimpleList(hero_url)
-                print 'page 1 ok'
-            else:
-                hero_url = 'http://db.dota2.uuu9.com/hero/list/?p='
-                hero_url += str(page)
-                self.getHeroSimpleList(hero_url)
-                time.sleep(5)
-                print 'page', page, ' okay!'
+        # for page in range(8, 12):
+        #     if page == 1:
+        #         hero_url = 'http://db.dota2.uuu9.com/hero/list/'
+        #         self.getHeroSimpleList(hero_url)
+        #         print 'page 1 ok'
+        #     else:
+        #         hero_url = 'http://db.dota2.uuu9.com/hero/list/?p='
+        #         hero_url += str(page)
+        #         self.getHeroSimpleList(hero_url)
+        #         time.sleep(5)
+        #         print 'page', page, ' okay!'
 
-                # self.getGoodSimpleList('http://db.dota2.uuu9.com/goods/list/?p=3&')
-                #
-                # # 物品列表
-                # for page in range(1, 16):
-                #     if page == 1:
-                #         good_url = 'http://db.dota2.uuu9.com/goods/list/'
-                #         self.getGoodSimpleList(good_url)
-                #         print 'page 1 okay!'
-                #     else:
-                #         good_url = 'http://db.dota2.uuu9.com/goods/list/?p='
-                #         good_url += str(page)
-                #         good_url += '&'
-                #         self.getGoodSimpleList(good_url)
-                #         time.sleep(5)
-                #         print 'page ', page, ' okay!'
+        self.getGoodSimpleList('http://db.dota2.uuu9.com/goods/list/?p=12&')
+
+        # # 物品列表
+        # for page in range(1, 16):
+        #     if page == 1:
+        #         good_url = 'http://db.dota2.uuu9.com/goods/list/'
+        #         self.getGoodSimpleList(good_url)
+        #         print 'page 1 okay!'
+        #     else:
+        #         good_url = 'http://db.dota2.uuu9.com/goods/list/?p='
+        #         good_url += str(page)
+        #         good_url += '&'
+        #         self.getGoodSimpleList(good_url)
+        #         time.sleep(5)
+        #         print 'page ', page, ' okay!'
 
 
 item = Item()
