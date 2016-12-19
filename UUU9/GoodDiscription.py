@@ -25,7 +25,7 @@ def initial(good):
 
 def get_tag_order(href):
     print 'href:', href[17:]
-    return int(href[17:]) + 1
+    return int(href[17:]) - 1
 
 
 def set_red(good, reds):
@@ -137,9 +137,11 @@ class GoodDetail:
                     order = get_tag_order(item['href'])
                     good.set(tags[order], True).save()
                     print 'value attribute:', good.get(tags[order])
-                discription = content.findAll('p')[1]
-                print 'discription:', discription.string
-                good.set('discription', discription.string.strip()).save()
+                discription = content.findAll('p')
+                for item in discription:
+                    print 'discription:', item.string
+                if discription[1].string is not None:
+                    good.set('discription', discription[1].string.strip()).save()
                 # red = discription.find_all('span', 'red')
                 # print 'red:', len(red)
                 # yellow = discription.find_all('span', 'yellow')
@@ -153,13 +155,22 @@ class GoodDetail:
     def start(self):
         baseUrl = "http://db.dota2.uuu9.com"
         GoodSave = leancloud.Object.extend('GoodSave')
-        # query = leancloud.Query(GoodSave)
-        query = GoodSave.query
-        good_info = query.equal_to('href', '/goods/show/LotharsEdge').find()[0]
+        query = leancloud.Query(GoodSave)
+        query.limit(10)
+        i = 0
+        while i < 19:
+            for x in query.find():
+                url = baseUrl + x.get('href')
+                print 'url:', url
+                self.getDetailInfo(url, good=x)
+            query.skip(10)
+            i += 1
+        # query = GoodSave.query
+        # good_info = query.equal_to('href', '/goods/show/LotharsEdge').find()[0]
         # good_info = query.find()[0]
-        url = baseUrl + good_info.get('href')
-        print 'url:%s' % url
-        self.getDetailInfo(url, good=good_info)
+        # url = baseUrl + good_info.get('href')
+        # print 'size:%d' % len(goods)
+        # self.getDetailInfo(url, good=good_info)
         # skip = 0
         # for index, good in enumerate(query):
         #     href = good.get('href')

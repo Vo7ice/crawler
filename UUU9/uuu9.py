@@ -269,21 +269,21 @@ class Item:
         #         time.sleep(5)
         #         print 'page', page, ' okay!'
 
-        self.getGoodSimpleList('http://db.dota2.uuu9.com/goods/list/?p=12&')
+        # self.getGoodSimpleList('http://db.dota2.uuu9.com/goods/list/?p=12&')
 
-        # # 物品列表
-        # for page in range(1, 16):
-        #     if page == 1:
-        #         good_url = 'http://db.dota2.uuu9.com/goods/list/'
-        #         self.getGoodSimpleList(good_url)
-        #         print 'page 1 okay!'
-        #     else:
-        #         good_url = 'http://db.dota2.uuu9.com/goods/list/?p='
-        #         good_url += str(page)
-        #         good_url += '&'
-        #         self.getGoodSimpleList(good_url)
-        #         time.sleep(5)
-        #         print 'page ', page, ' okay!'
+        # 物品列表
+        for page in range(6, 16):
+            if page == 1:
+                good_url = 'http://db.dota2.uuu9.com/goods/list/'
+                self.getGoodSimpleList(good_url)
+                print 'page 1 okay!'
+            else:
+                good_url = 'http://db.dota2.uuu9.com/goods/list/?p='
+                good_url += str(page)
+                good_url += '&'
+                self.getGoodSimpleList(good_url)
+                time.sleep(5)
+                print 'page ', page, ' okay!'
 
 
 item = Item()
