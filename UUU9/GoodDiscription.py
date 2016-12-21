@@ -86,7 +86,7 @@ class GoodDetail:
         self.headers = {'User-Agent': self.user_agent}
 
     def getDetailInfo(self, url, good):
-        initial(good=good)
+        # initial(good=good)
         req = requests.get(url, headers=self.headers)
         print 'req status_code:%d' % req.status_code
         if req.status_code == 200:
@@ -124,31 +124,30 @@ class GoodDetail:
             else:
                 print 'no hero fit this item'
             good.set('suit', suit).save()  # 设置适合出这件装备的英雄
+            content = soup.find_all('div', {'class': 'textbox r'})[0].find_all('span', {'class': 'paddju'})[0]
+            print 'discription:',content.findAll('p')[1].getText().strip()
+            if content is not None:
+                good.set('discription', content.findAll('p')[1].getText('\n', '</br>').strip()).save()
 
-            span = soup.find_all('span', 'paddju')
-            print 'span:%d' % len(span)
-            if span is not None:
-                content = span[0]
-                print 'content:', content
-                tag = content.findAll('a')
-                print 'tag:%d' % len(tag)
-                for item in tag:
-                    print 'item:%s' % item
-                    order = get_tag_order(item['href'])
-                    good.set(tags[order], True).save()
-                    print 'value attribute:', good.get(tags[order])
-                discription = content.findAll('p')
-                for item in discription:
-                    print 'discription:', item.string
-                if discription[1].string is not None:
-                    good.set('discription', discription[1].string.strip()).save()
-                # red = discription.find_all('span', 'red')
-                # print 'red:', len(red)
-                # yellow = discription.find_all('span', 'yellow')
-                # print 'yellow:', len(yellow)
-                # discription = discription.replace('</br>', '\n')
-            else:
-                print 'no content exsit'
+            # span = soup.find_all('div', {'class': 'textbox r'})
+            # print 'span:%d' % len(span)
+            # for i, x in enumerate(span):
+            #     print 'span:%d,%s' % (i, x)
+            # if span is not None:
+            #     content = span[0]
+            #     print 'content:', content
+            #     tag = content.findAll('a')
+            #     print 'tag:%d' % len(tag)
+            #     # for item in tag:
+            #     #     print 'item:%s' % item
+            #     #     order = get_tag_order(item['href'])
+            #     #     good.set(tags[order], True).save()
+            #     #     print 'value attribute:', good.get(tags[order])
+            #     discription = content.findAll('p')
+            #     if discription[1].string is not None:
+            #         good.set('discription', discription[1].getText('\n').strip()).save()
+            # else:
+            #     print 'no content exsit'
         else:
             print 'network error'
 
@@ -159,17 +158,18 @@ class GoodDetail:
         query.limit(10)
         i = 0
         while i < 19:
+            query.skip(10 * i)
             for x in query.find():
                 url = baseUrl + x.get('href')
                 print 'url:', url
                 self.getDetailInfo(url, good=x)
-            query.skip(10)
             i += 1
+            print 'i:', i
         # query = GoodSave.query
-        # good_info = query.equal_to('href', '/goods/show/LotharsEdge').find()[0]
+        # good_info = query.equal_to('href', '/goods/show/ mango').find()[0]
         # good_info = query.find()[0]
         # url = baseUrl + good_info.get('href')
-        # print 'size:%d' % len(goods)
+        # print 'size:%d' % len(good_info)
         # self.getDetailInfo(url, good=good_info)
         # skip = 0
         # for index, good in enumerate(query):
