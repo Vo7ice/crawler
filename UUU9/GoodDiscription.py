@@ -17,6 +17,16 @@ tags = ['hp', 'mp', 'life_regeneration', 'mana_regeneration', 'armor', 'magic_re
         'sheena', 'miracle_tree', 'black_marketeer', 'goblin_lab', 'goblin_merchant'
         ]
 
+basic_consume = ['16', '201', '17', '43', '45', '49', '51', '53', '55', '58']
+basic_property = ['128', '129', '131', '132', '134', '135', '136', '140', '145', '146', '148']
+basic_arms = ['48', '61', '56', '215', '216', '76', '65', '67', '73', '68', '71', '75', '77', '80']
+basic_arcane = ['214', '82', '86', '90', '93', '96', '98', '52', '100', '102', '113', '103', '109']
+upgrade_normal = ['22', '84', '87', '91', '95', '99', '104', '195', '194', '193', '106', '107', '108', '112', '206']
+upgrade_auxiliary = ['133', '138', '142', '147', '151', '155', '157', '162', '165', '170', '176', '180', '205']
+upgrade_magic = ['21', '32', '23', '24', '25', '27', '28', '29', '30', '31', '26', '210', '33', '34', '35', '36', '37',
+                 '211']
+upgrade_weapon = []
+
 
 def initial(good):
     for tag in tags:
@@ -125,29 +135,29 @@ class GoodDetail:
                 print 'no hero fit this item'
             good.set('suit', suit).save()  # 设置适合出这件装备的英雄
             content = soup.find_all('div', {'class': 'textbox r'})[0].find_all('span', {'class': 'paddju'})[0]
-            print 'discription:',content.findAll('p')[1].getText().strip()
+            print 'discription:', content.findAll('p')[1].getText().strip()
             if content is not None:
                 good.set('discription', content.findAll('p')[1].getText('\n', '</br>').strip()).save()
 
-            # span = soup.find_all('div', {'class': 'textbox r'})
-            # print 'span:%d' % len(span)
-            # for i, x in enumerate(span):
-            #     print 'span:%d,%s' % (i, x)
-            # if span is not None:
-            #     content = span[0]
-            #     print 'content:', content
-            #     tag = content.findAll('a')
-            #     print 'tag:%d' % len(tag)
-            #     # for item in tag:
-            #     #     print 'item:%s' % item
-            #     #     order = get_tag_order(item['href'])
-            #     #     good.set(tags[order], True).save()
-            #     #     print 'value attribute:', good.get(tags[order])
-            #     discription = content.findAll('p')
-            #     if discription[1].string is not None:
-            #         good.set('discription', discription[1].getText('\n').strip()).save()
-            # else:
-            #     print 'no content exsit'
+                # span = soup.find_all('div', {'class': 'textbox r'})
+                # print 'span:%d' % len(span)
+                # for i, x in enumerate(span):
+                #     print 'span:%d,%s' % (i, x)
+                # if span is not None:
+                #     content = span[0]
+                #     print 'content:', content
+                #     tag = content.findAll('a')
+                #     print 'tag:%d' % len(tag)
+                #     # for item in tag:
+                #     #     print 'item:%s' % item
+                #     #     order = get_tag_order(item['href'])
+                #     #     good.set(tags[order], True).save()
+                #     #     print 'value attribute:', good.get(tags[order])
+                #     discription = content.findAll('p')
+                #     if discription[1].string is not None:
+                #         good.set('discription', discription[1].getText('\n').strip()).save()
+                # else:
+                #     print 'no content exsit'
         else:
             print 'network error'
 
@@ -165,18 +175,18 @@ class GoodDetail:
                 self.getDetailInfo(url, good=x)
             i += 1
             print 'i:', i
-        # query = GoodSave.query
-        # good_info = query.equal_to('href', '/goods/show/ mango').find()[0]
-        # good_info = query.find()[0]
-        # url = baseUrl + good_info.get('href')
-        # print 'size:%d' % len(good_info)
-        # self.getDetailInfo(url, good=good_info)
-        # skip = 0
-        # for index, good in enumerate(query):
-        #     href = good.get('href')
-        #     url = baseUrl + href
-        #     self.getDetailInfo(url, good_info=good)
-        #     time.sleep(5)
+            # query = GoodSave.query
+            # good_info = query.equal_to('href', '/goods/show/ mango').find()[0]
+            # good_info = query.find()[0]
+            # url = baseUrl + good_info.get('href')
+            # print 'size:%d' % len(good_info)
+            # self.getDetailInfo(url, good=good_info)
+            # skip = 0
+            # for index, good in enumerate(query):
+            #     href = good.get('href')
+            #     url = baseUrl + href
+            #     self.getDetailInfo(url, good_info=good)
+            #     time.sleep(5)
 
 
 detail = GoodDetail()
