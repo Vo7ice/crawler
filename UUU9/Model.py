@@ -69,6 +69,68 @@ class HeroSave(BaseSave):
     def recommend(self, value):
         return self.set('recommend', value)
 
+    # 基础属性
+    @property
+    def base_property(self):
+        return self.get('base_property')
+
+    @base_property.setter
+    def base_property(self, value):
+        return self.set('base_property', value)
+
+    # 属性指数
+    @property
+    def attribute_index(self):
+        return self.get('attribute_index')
+
+    @attribute_index.setter
+    def attribute_index(self, value):
+        return self.set('attribute_index', value)
+
+    # 出门装
+    @property
+    def begin(self):
+        return self.get('begin')
+
+    @begin.setter
+    def begin(self, value):
+        return self.set('begin', value)
+
+    # 前期装备
+    @property
+    def early(self):
+        return self.get('early')
+
+    @early.setter
+    def early(self, value):
+        return self.set('early', value)
+
+    # 核心装备
+    @property
+    def core(self):
+        return self.get('core')
+
+    @core.setter
+    def core(self, value):
+        return self.set('core', value)
+
+    # 可选装备
+    @property
+    def available(self):
+        return self.get('available')
+
+    @available.setter
+    def available(self, value):
+        return self.set('available', value)
+
+    @property
+    def points(self):
+        return self.get('points')
+
+    @points.setter
+    def points(self, value):
+        return self.set('points', value)
+
 
 # 物品存储类 包含gold(金钱) composite(合成公式) advanced(可合成装备)
 class GoodSave(BaseSave):
@@ -157,6 +219,7 @@ class GoodSave(BaseSave):
     8：防具
     9：圣物
     10：神秘
+    11: roshan
     """
 
     @property

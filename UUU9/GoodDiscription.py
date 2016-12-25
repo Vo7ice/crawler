@@ -23,13 +23,13 @@ basic_arms = ['48', '61', '56', '215', '216', '76', '65', '67', '73', '68', '71'
 basic_arcane = ['214', '82', '86', '90', '93', '96', '98', '52', '100', '102', '113', '103', '109']
 upgrade_normal = ['22', '84', '87', '91', '95', '99', '104', '195', '194', '193', '106', '107', '108', '112', '206']
 upgrade_auxiliary = ['133', '138', '142', '147', '151', '155', '157', '162', '165', '170', '176', '180', '205']
-upgrade_magic = ['204', '21', '32', '23', '24', '25', '27', '28', '29', '30', '31', '26', '210', '33', '34', '35', '36',
-                 '37',
-                 '211']
+upgrade_magic = ['204', '21', '32', '23', '24', '25', '27', '28', '29', '30', '31', '26', '210', '33', '34', '35',
+                 '36', '37', '211']
 upgrade_weapon = ['38', '41', '44', '46', '50', '57', '208', '64', '72', '74', '79', '81']
 upgrade_armor = ['88', '92', '97', '111', '198', '115', '202', '130', '153', '144', '156', '160', '163']
 upgrade_relic = ['166', '168', '171', '174', '178', '182', '188', '187', '190', '184']
 mystery = ['15', '18', '39', '40', '78', '105', '42', '150', '59', '62', '66', '70']
+roshan = ['197', '196']
 
 
 def initial(good):
@@ -67,6 +67,50 @@ def set_orange(good, oranges):
         orange += oranges[i].string
         orange += '\n'
     good.set('orange', orange).save()
+
+
+def set_typeandcategory(good):
+    source = -1
+    category = -1
+    gid = good.get('oid')
+    if gid in basic_consume:
+        source = 0
+        category = 0
+    if gid in basic_property:
+        source = 0
+        category = 1
+    if gid in basic_arms:
+        source = 0
+        category = 2
+    if gid in basic_arcane:
+        source = 0
+        category = 3
+    if gid in upgrade_normal:
+        source = 1
+        category = 4
+    if gid in upgrade_auxiliary:
+        source = 1
+        category = 5
+    if gid in upgrade_magic:
+        source = 1
+        category = 6
+    if gid in upgrade_weapon:
+        source = 1
+        category = 7
+    if gid in upgrade_armor:
+        source = 1
+        category = 8
+    if gid in upgrade_relic:
+        source = 1
+        category = 9
+    if gid in mystery:
+        source = 2
+        category = 10
+    if gid in roshan:
+        source = 3
+        category = 11
+    good.set('source', source).save()
+    good.set('category', category).save()
 
 
 def checkHeroExsit(oid):
@@ -142,26 +186,27 @@ class GoodDetail:
             print 'discription:', content.findAll('p')[1].getText().strip()
             if content is not None:
                 good.set('discription', content.findAll('p')[1].getText('\n', '</br>').strip()).save()
+            set_typeandcategory(good)
 
-                # span = soup.find_all('div', {'class': 'textbox r'})
-                # print 'span:%d' % len(span)
-                # for i, x in enumerate(span):
-                #     print 'span:%d,%s' % (i, x)
-                # if span is not None:
-                #     content = span[0]
-                #     print 'content:', content
-                #     tag = content.findAll('a')
-                #     print 'tag:%d' % len(tag)
-                #     # for item in tag:
-                #     #     print 'item:%s' % item
-                #     #     order = get_tag_order(item['href'])
-                #     #     good.set(tags[order], True).save()
-                #     #     print 'value attribute:', good.get(tags[order])
-                #     discription = content.findAll('p')
-                #     if discription[1].string is not None:
-                #         good.set('discription', discription[1].getText('\n').strip()).save()
-                # else:
-                #     print 'no content exsit'
+            # span = soup.find_all('div', {'class': 'textbox r'})
+            # print 'span:%d' % len(span)
+            # for i, x in enumerate(span):
+            #     print 'span:%d,%s' % (i, x)
+            # if span is not None:
+            #     content = span[0]
+            #     print 'content:', content
+            #     tag = content.findAll('a')
+            #     print 'tag:%d' % len(tag)
+            #     # for item in tag:
+            #     #     print 'item:%s' % item
+            #     #     order = get_tag_order(item['href'])
+            #     #     good.set(tags[order], True).save()
+            #     #     print 'value attribute:', good.get(tags[order])
+            #     discription = content.findAll('p')
+            #     if discription[1].string is not None:
+            #         good.set('discription', discription[1].getText('\n').strip()).save()
+            # else:
+            #     print 'no content exsit'
         else:
             print 'network error'
 
