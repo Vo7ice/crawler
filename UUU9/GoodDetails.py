@@ -1,4 +1,5 @@
 # coding=utf-8
+from bs4 import BeautifulSoup
 import requests
 
 __author__ = 'Vo7ice'
@@ -24,6 +25,6 @@ class GoodDetails(object):
         req = requests.get(url, headers=self.headers)
         print 'req status_code:%d' % req.status_code
         if req.status_code == 200:
-            pass
+            soup = BeautifulSoup(req.content, 'html.parser')
         else:
             print 'network error'

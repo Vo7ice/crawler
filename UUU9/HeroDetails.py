@@ -2,6 +2,7 @@
 from bs4 import BeautifulSoup
 import leancloud
 import requests
+from Config import base_url
 
 __author__ = 'Vo7ice'
 
@@ -41,7 +42,7 @@ class HeroDetails(object):
         self.headers = {'User-Agent': self.user_agent}
 
     def start(self):
-        pass
+        self.get_detail(base_url + self.hero.get('href'))
 
     def get_detail(self, url):
         print 'start get hero %s detail.' % self.hero.get('name')

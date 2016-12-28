@@ -1,5 +1,7 @@
 # coding=utf-8
+from bs4 import BeautifulSoup
 import requests
+from Config import base_url
 
 __author__ = 'Vo7ice'
 
@@ -24,6 +26,7 @@ class SkillDetails(object):
         req = requests.get(url, headers=self.headers)
         print 'req status_code:%d' % req.status_code
         if req.status_code == 200:
-            pass
+            soup = BeautifulSoup(req.content, 'html.parser')
+
         else:
             print 'network error'
